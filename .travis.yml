@@ -2,6 +2,9 @@ language: go
 go:
 - 1.11
 sudo: false
+arch:
+  - amd64
+  - ppc64le
 dist: trusty
 addons:
   apt:

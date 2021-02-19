@@ -24,7 +24,7 @@ GIT_TAG=$(shell git describe --tags)
 GO = go
 EXTRA_GO_FLAGS =
 LD_FLAGS = -X main.version=$(VERSION) -X main.apimachineryVersion=$(APIMACHINERY_VER) -X generator.revision=$(REVISION) $(GO_LDFLAGS)
-GO_FLAGS = -ldflags="$(LD_FLAGS) " $(EXTRA_GO_FLAGS)
+GO_FLAGS = -ldflags="$(LD_FLAGS) -X main.version=${VERSION}" $(EXTRA_GO_FLAGS)
 GOFMT = gofmt
 
 KCFG_TEST_FILE = lib/kubecfg_test.jsonnet
@@ -47,6 +47,16 @@ Gopkg.lock: Gopkg.toml
 
 ks: Gopkg.lock
 	$(GO) build -o $(KS_BIN) $(GO_FLAGS) ./cmd/ks
+
+ks-ppc: Gopkg.lock
+	@env GOARCH=ppc64le GOOS=linux $(GO) build  -o $(KS_BIN) $(GO_FLAGS) ./cmd/ks
+
+ks-all: Gopkg.lock
+	gox -verbose $(GO_FLAGS) \
+        -os="linux darwin windows" \
+        -arch="amd64 arm64 s390x ppc64le" \
+        -osarch="!darwin/arm64" \
+        -output="dist/{{.OS}}-{{.Arch}}/{{.Dir}}" .
 
 docs:
 	$(DOC_GEN_FILE)
