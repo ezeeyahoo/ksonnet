@@ -42,6 +42,9 @@ all: ks docs
 ks:
 	$(GO) build -o $(KS_BIN) $(GO_FLAGS) ./cmd/ks
 
+ks-ppc:Gopkg.lock
+	@env GOARCH=ppc64le GOOS=linux $(GO) build  -o $(KS_BIN) $(GO_FLAGS) ./cmd/ks
+
 docs:
 	$(DOC_GEN_FILE)
 
